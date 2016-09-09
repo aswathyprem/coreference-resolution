@@ -7,28 +7,29 @@ from nltk.tree import *
 #This method extracts noun phrases and corresponding co-reference markings from the new data structure
 def getMarkables(file_dict):
     try:
-		# Initialize dictionaries to store data
+	# Initialize dictionaries to store data
         doc_dict = {}
-        sent_dict = {}       
-		# Start reading the data from file_dict
+        sent_dict = {}   
+        #o = open('/home/users0/veluthay/2Semester/Coreference/programming-exercise/code/output/markables.txt','w')    
+	# Start reading the data from file_dict
         for i in range(len(file_dict)):
-			# store document id in a variable
+	    # store document id in a variable
             document = i+1
-            sent_dict = {}
-			# Iterate through each sentence
+            sent_dict = []
+	    # Iterate through each sentence
             for j in range(len(file_dict[i+1])):
-				# Store sentence id in a variable
+		# Store sentence id in a variable
                 sentence = j+1
                 list_of_list = file_dict[i+1][j+1]
-				# Initialize lists to store corresponding values
-				# for each sentence
+		# Initialize lists to store corresponding values
+		# for each sentence
                 tokens = []
                 pos = []
                 parses = []
                 coref = []
 				
-				# Iterate through each line and append 
-				# the values to corresponding lists
+		# Iterate through each line and append 
+		# the values to corresponding lists
                 for k in range(len(list_of_list)):
                     word_list = list_of_list[k]
                     tokens.append(word_list[3])
@@ -38,38 +39,41 @@ def getMarkables(file_dict):
                 
                 parse_list = []
 				
-				# Create a pattern to compare the presence 
-				# of stars in the parses
+        	# Create a pattern to compare the presence 
+		# of stars in the parses
                 pattern1 = re.compile('.*\*.*')
 				
-				# Iterate through parses and replace 
-				# the stars with leaf nodes of the tree (tokens).
+		# Iterate through parses and replace 
+		# the stars with leaf nodes of the tree (tokens).
                 for l in range(len(parses)):
                     if pattern1.match(parses[l]):
                         parse_list.append(parses[l].replace('*', ' '+tokens[l]))
                 parse_tree = ''.join(parse_list)      
 				
-				# call extractNP function to extract 
-				# noun phrases from the joined parse trees
+		# call extractNP function to extract 
+		# noun phrases from the joined parse trees
                 NP = extractNP(Tree.fromstring(parse_tree))              
 				
-				# call matchCoref function to extract
-				# the coreferences for the NPs
+		# call matchCoref function to extract
+		# the coreferences for the NPs
                 NP_coref =  matchCoref(NP, tokens, coref)
 				
-				# Add the list of coreferences for each 
-				# sentence to a dictionary with sentence id as key
-                sent_dict[sentence] = NP_coref
+		# Add the list of coreferences for each 
+		# sentence to a dictionary with sentence id as key
+                #sent_dict[sentence] = NP_coref
+                sent_dict = sent_dict + NP_coref
 				
-			# Add the list of coreferences for all the sentences 
-			# in one document to a dictionary with document id as key
+        	# Add the list of coreferences for all the sentences 
+	        # in one document to a dictionary with document id as key
             doc_dict[document] = sent_dict
+            
         return doc_dict
                                         
     except Exception as e:
         print "\tError %s" % str(e.message)
 
-    
+
+#Method to extract noun phrases from the parse trees.    
 def extractNP(parseTree):
     myPhrases = []
     if (parseTree.label()== 'NP'):
@@ -84,6 +88,7 @@ def extractNP(parseTree):
 
 
 
+#Method to extract the coreference ids for each noun phrase
 def matchCoref(NP, tokens, coref):
     NP_coref = []
     for phrases in NP:
