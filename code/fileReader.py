@@ -27,11 +27,15 @@ def fileReader(filename):
                         
                         # Initiatlize parameters at start and end of a document
                         if line.startswith('#begin'):
+                            #print "document begins"
                             doc_count = doc_count + 1
                             line_count = line_count + 1
                             flag = True
                             continue
                         elif line.startswith('#end'):
+                            #print doc_count
+                            #print line_count
+                            #print "document ends"
                             # every time a document ends, add the line details to a dictionary and reset the dictionary
                             file_dict[doc_count] = col_dict
                             col_dict = {}
@@ -53,7 +57,8 @@ def fileReader(filename):
                                                            
                          
                 f.close()
-
+                #print file_dict[1]
+                #print file_dict[2] 
         except Exception as e:
                 print "\tError %s" % str(e.message)
 
